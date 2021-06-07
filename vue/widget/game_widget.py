@@ -1,19 +1,20 @@
+import os
 from tkinter import *
 
 from PIL import ImageTk, Image, ImageDraw
 
 
 # fonction cambrioler sur la sainte bible de stack overflow
-def add_corners(im: Image, radx: int, rady: int) -> Image:
-    circle = Image.new('L', (radx * 2, rady * 2), 0)
+def add_corners(im: Image, rad: int, ) -> Image:
+    circle = Image.new('L', (rad * 2, rad * 2), 0)
     draw = ImageDraw.Draw(circle)
-    draw.ellipse((0, 0, radx * 2, rady * 2), fill=255)
+    draw.ellipse((0, 0, rad * 2, rad * 2), fill=255)
     alpha = Image.new('L', im.size, 255)
     w, h = im.size
-    alpha.paste(circle.crop((0, 0, radx, rady)), (0, 0))
-    alpha.paste(circle.crop((0, rady, radx, rady * 2)), (0, h - rady))
-    alpha.paste(circle.crop((radx, 0, radx * 2, rady)), (w - radx, 0))
-    alpha.paste(circle.crop((radx, rady, radx * 2, rady * 2)), (w - radx, h - rady))
+    alpha.paste(circle.crop((0, 0, rad, rad)), (0, 0))
+    alpha.paste(circle.crop((0, rad, rad, rad * 2)), (0, h - rad))
+    alpha.paste(circle.crop((rad, 0, rad * 2, rad)), (w - rad, 0))
+    alpha.paste(circle.crop((rad, rad, rad * 2, rad * 2)), (w - rad, h - rad))
     im.putalpha(alpha)
     return im
 
@@ -66,16 +67,35 @@ class GameWidget(Frame):
 
         self._image = Image.alpha_composite(self._image, overlay)
 
-        self._image = ImageTk.PhotoImage(add_corners(self._image, int(w * 0.1),
-                                                     int(h * 0.1)))
+        self._image = ImageTk.PhotoImage(add_corners(self._image,
+                                                     max(int(w * 0.1), int(h * 0.1))))
         self.canvas.create_image((w / 2, h / 2), image=self._image)
         self.canvas.create_text(int(w / 2), int(0.9 * h), fill="white", font=f"Times {int(h * 0.1)} italic bold",
                                 text=self.name, anchor="center")
 
 
+class GameGrid(Frame):
+    def __init__(self, root, **kw):
+        super().__init__(root, **kw)
+        games_widget = []
+        for subdir, dirs, files in os.walk("./imageBidon"):
+            i = int(len(files) ** 0.5)
+            j = 0
+            for file in files:
+                # print os.path.join(subdir, file)
+                filepath = subdir + os.sep + file
+                widget = GameWidget(self, Image.open(filepath), file[:file.rfind(".")])
+                games_widget.append(widget)
+                widget.grid(sticky="nswe", column=j % i, row=j // i, padx=10, pady=10)
+                Grid.columnconfigure(self, j % i, weight=1)
+                Grid.rowconfigure(self, j // i, weight=1)
+                j += 1
+        self.game_widgets = games_widget
+
+
 if __name__ == "__main__":
     fenetre = Tk()
-    window = GameWidget(fenetre, Image.open("./quazar.jpg"), "Black Hole")
+    window = GameGrid(fenetre)
     window.pack(fill=BOTH, expand=1)
     fenetre.geometry('840x640')
     fenetre.mainloop()
