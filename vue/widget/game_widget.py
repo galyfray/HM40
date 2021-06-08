@@ -108,11 +108,6 @@ class GameWidget(Frame):
             self._canvas.itemconfigure(text_elem, text=text)
             text_bounds = self._canvas.bbox(text_elem)
 
-        if self._mouse:
-            button = Button(text="Start", font=f"Times {int(h * 0.08)} italic bold", justify='center',
-                            command=lambda e: print("click"))
-            button.place()
-
     def on_enter(self, event):
         self._mouse = True
         self.re_draw()
