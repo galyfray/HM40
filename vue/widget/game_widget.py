@@ -1,9 +1,8 @@
 import os
-from tkinter import *
 
-from PIL import ImageTk, Image, ImageDraw
+from PIL import ImageTk
 
-from utils import RatioKeeperContainer, get_best_size, add_corners, is_in_bound
+from utils import *
 
 
 class GameWidget(Frame):
@@ -61,7 +60,7 @@ class GameWidget(Frame):
                                              font=f"Times {int(h * 0.1)} italic bold",
                                              text=text, anchor="center")
         text_bounds = self._canvas.bbox(text_elem)
-        while text_bounds[2] - text_bounds[0] > w * 0.95:
+        while text_bounds[2] - text_bounds[0] > w * 0.95 and len(text) > 3:
             text = text[:-4] + "..."
             self._canvas.itemconfigure(text_elem, text=text)
             text_bounds = self._canvas.bbox(text_elem)
@@ -94,28 +93,53 @@ class GameGrid(Frame):
     def __init__(self, root, **kw):
         super().__init__(root, **kw)
         games_widget = []
+        containers = []
         for subdir, dirs, files in os.walk("./imageBidon"):
             nb_col = 5
             j = 0
             for file in files:
                 filepath = subdir + os.sep + file
-                widget = GameWidget(None, Image.open(filepath), file[:file.rfind(".")])
+                container = RatioKeeperContainer(self, 0.65)
+                widget = GameWidget(container, Image.open(filepath), file[:file.rfind(".")])
                 games_widget.append(widget)
-
-                container = RatioKeeperContainer(self, widget, 0.65)
                 container.grid(sticky="nsew", column=j % nb_col, row=j // nb_col, padx=10, pady=10)
-
+                containers.append(container)
                 Grid.columnconfigure(self, j % nb_col, weight=1)
                 Grid.rowconfigure(self, j // nb_col, weight=1)
                 j += 1
         self.game_widgets = games_widget
+        self.containers = containers
 
 
 if __name__ == "__main__":
-    fenetre = Tk()
-    window = GameGrid(fenetre)
-    window.grid(sticky="nsew", column=0, row=0)
-    fenetre.rowconfigure(0, weight=1)
-    fenetre.columnconfigure(0, weight=1)
-    fenetre.geometry('840x640')
-    fenetre.mainloop()
+    root = Tk()
+    root.configure(background='black')
+    sf = ScrollableFrame(root, bg="green")
+
+    cr = GameGrid(sf)
+    cr.grid(sticky="nsew")
+
+
+    def _on_config(self, event):
+        print(event)
+
+
+    def contconf(event):
+        w = event.width // 5
+        h = int(w / 0.65)
+        for c in cr.containers:
+            c.config(height=h)
+
+
+    sf.bind(
+        "<Configure>",
+        contconf,
+        add="+"
+    )
+
+    sf.columnconfigure(0, weight=1)
+    sf.container.grid(column=0, row=0, sticky="nsew")
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
+    root.geometry('840x640')
+    root.mainloop()
