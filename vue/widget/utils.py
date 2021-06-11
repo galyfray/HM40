@@ -1,5 +1,7 @@
 from tkinter import *
 
+from PIL import Image, ImageDraw
+
 
 def get_best_size(wanted_ratio, w, h):
     c_ratio = w / h
@@ -35,19 +37,58 @@ def is_in_bound(bound, coord):
 
 
 class RatioKeeperContainer(Frame):
-    def __init__(self, root, elem: Widget, ratio, **kw):
+    def __init__(self, root, ratio, **kw):
         super().__init__(root, **kw)
-        self._elem = elem
         self.ratio = ratio
-
-        elem.grid(sticky="nsew", column=0, row=0)
 
         self.bind("<Configure>", self._on_config, add="+")
 
     def _on_config(self, event):
-        w = event.width
-        h = event.height
-        rw, rh = get_best_size(self.ratio, w, h)
-        ew, eh = self._elem.winfo_width(), self._elem.winfo_height()
-        self._elem.place(in_=self, x=(w - rw) / 2, y=(h - rh) / 2,
-                         width=rw, height=rh)
+        elem = self.winfo_children()[0]
+        if elem is not None:
+            w = event.width
+            h = event.height
+            rw, rh = get_best_size(self.ratio, w, h)
+            elem.place(in_=self, x=(w - rw) / 2, y=(h - rh) / 2,
+                       width=rw, height=rh)
+
+
+class AutoScrollbar(Scrollbar):
+    def set(self, lo, hi):
+        if float(lo) <= 0 and float(hi) >= 1:
+            self.grid_remove()
+        else:
+            self.grid()
+        Scrollbar.set(self, lo, hi)
+
+
+class ScrollableFrame(Frame):
+    def __init__(self, master=None, *args, **kwargs):
+        self.container = Frame(master, bg="red")
+        self._canvas = Canvas(self.container)
+        self._scrollbar = Scrollbar(self.container, orient="vertical", command=self._canvas.yview)
+
+        super().__init__(self._canvas, *args, **kwargs)
+
+        self.bind(
+            "<Configure>",
+            lambda e: self._canvas.configure(
+                scrollregion=self._canvas.bbox("all")
+            )
+        )
+
+        def canvas_config(event):
+            self._canvas.delete("all")
+            self._canvas.create_window((0, 0), window=self, anchor="nw", width=event.width)
+
+        self._canvas.bind(
+            "<Configure>",
+            canvas_config
+        )
+
+        self._canvas.configure(yscrollcommand=self._scrollbar.set)
+
+        self._canvas.grid(sticky="nsew")
+        self._scrollbar.grid(row=0, column=1, sticky="ns")
+        self.container.columnconfigure(0, weight=1)
+        self.container.rowconfigure(0, weight=1)
