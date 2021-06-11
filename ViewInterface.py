@@ -6,6 +6,13 @@ class Interface():
     fen = tk.Tk()
     #Titre
     fen.title("Game Folder")
+
+    #Icone
+    fen.iconbitmap('images/icone.ico') #solution1
+
+    #icone = tk.PhotoImage(file='images/icone.gif')  # solution2
+    #fen.iconphoto(True, icone)
+
     #Geometry
     fen.geometry("900x600")
     #fen.iconbitmap("") #icon de fenêtre
@@ -15,7 +22,7 @@ class Interface():
     frame_menu = tk.Frame(fen, borderwidth=10 )
     frame_menu.grid(row=0, column=0, sticky="E")
     #___Image___
-    image_logo = Image.open("logo.png")
+    image_logo = Image.open("images/logo.png")
     image_logo = image_logo.resize((160,140))
     img = ImageTk.PhotoImage(image_logo)
     logo = tk.Label(frame_menu,image=img)
@@ -24,15 +31,16 @@ class Interface():
     #___Frame Label Trier par___
     Trier_par = tk.LabelFrame(frame_menu, text="Trier par")
     #___Buttons Radio___
-    buttonRadio_Ordre_Alpha = tk.Radiobutton(Trier_par, text="Ordre Alphabétique")
-    buttonRadio_Mes_Jeux = tk.Radiobutton(Trier_par, text="Mes jeux")
-    buttonRadio_Plus_Recent = tk.Radiobutton(Trier_par, text="Plus récent")
-    buttonRadio_Moins_joue = tk.Radiobutton(Trier_par, text="Moins joué")
-    buttonRadio_Ordre_Alpha.grid(row=0, sticky=tk.W)
-    buttonRadio_Mes_Jeux.grid(row=1,sticky=tk.W)
-    buttonRadio_Plus_Recent.grid(row=2,sticky=tk.W)
-    buttonRadio_Moins_joue.grid(row=3,sticky=tk.W)
-    Trier_par.pack(fill=tk.BOTH,expand=tk.YES)
+
+    tri = tk.IntVar(value=1)
+
+    tk.Radiobutton(Trier_par, text="Ordre Alphabétique", variable=tri, value=1).grid(row=0, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Plus récent", variable=tri, value=2).grid(row=1, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Plus joué", variable=tri, value=3).grid(row=2, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Moins joué", variable=tri, value=4).grid(row=3, sticky=tk.W)
+
+    Trier_par.pack(fill=tk.BOTH, expand=tk.YES)
+
     #___Button Fonctionnalitées___
     button_Jeu_aleatoire = tk.Button(frame_menu, text="Jeu aléatoire")
     button_Jeu_aleatoire.pack(fill=tk.BOTH,expand=tk.YES)
@@ -45,7 +53,7 @@ class Interface():
     frame_top = tk.Frame(frame_generale)
     frame_top.pack()
     # ___Image___
-    image_logo2 = Image.open("logo.png")
+    image_logo2 = Image.open("images/logo.png")
     image_logo2 = image_logo2.resize((80, 70))
     img2 = ImageTk.PhotoImage(image_logo2)
     logo2 = tk.Label(frame_top, image=img2)
