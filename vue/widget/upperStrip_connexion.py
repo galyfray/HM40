@@ -50,32 +50,35 @@ style.theme_create("yummy", parent="alt", settings={
 
 style.theme_use("yummy")
 
-notebook = ttk.Notebook(root, style="lefttab.TNotebook")
-
-f1 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
-f2 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
-f3 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
-
-text1 = Label(f1, text="On doit mettre quoi ici ?", bg=mygrey, fg=mywhite).pack()
-# text2 = Label(f2, text="Et là ?", bg=mygrey, fg=mywhite).pack()
-# text3 = Label(f3, text="Et ici ?", bg=mygrey, fg=mywhite).pack()
-
-# add what you want in each Frame
-
-notebook.add(f1, text="Mon Compte ")
-notebook.add(f2, text="Déconnexion")
-notebook.add(f3, text="Paramètres ")
-
 button = 0
+notebook = None
 
 
 def settings(event):
+    # TODO utiliser une classe pour stocker des infos dans self au lieux des var global
     global button
+    global notebook
     if button == 0:
-        notebook.pack(anchor="ne")
+        notebook = ttk.Notebook(None, style="lefttab.TNotebook")
+
+        f1 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
+        f2 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
+        f3 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
+
+        text1 = Label(f1, text="On doit mettre quoi ici ?", bg=mygrey, fg=mywhite).pack()
+        # text2 = Label(f2, text="Et là ?", bg=mygrey, fg=mywhite).pack()
+        # text3 = Label(f3, text="Et ici ?", bg=mygrey, fg=mywhite).pack()
+
+        # add what you want in each Frame
+
+        notebook.add(f1, text="Mon Compte ")
+        notebook.add(f2, text="Déconnexion")
+        notebook.add(f3, text="Paramètres ")
+        notebook.place(x=root.winfo_screenwidth() - 300, y=75, width=300, height=400)
+        notebook.lift()
         button = 1
     else:
-        notebook.pack_forget()
+        notebook.destroy()
         button = 0
     pass
 
@@ -84,5 +87,31 @@ idButton = Button(root, image=idPhoto, relief="flat", borderwidth=0, highlightth
                   activebackground="#272727")
 idButton.bind('<Button-1>', settings)
 idButton.place(x=t, y=0)
+
+from game_widget import GameGrid
+from utils import ScrollableFrame
+
+g_frame = ScrollableFrame(root, bg="blue")
+
+gd = GameGrid(g_frame)
+
+
+def contconf(event):
+    w = event.width // 5
+    h = int(w / 0.65)
+    for c in gd.containers:
+        c.config(height=h)
+
+
+g_frame.bind(
+    "<Configure>",
+    contconf,
+    add="+"
+)
+
+g_frame.container.pack(fill=BOTH, expand=1, side=BOTTOM)
+gd.grid(sticky="nsew")
+g_frame.columnconfigure(0, weight=1)
+g_frame.rowconfigure(0, weight=1)
 
 root.mainloop()
