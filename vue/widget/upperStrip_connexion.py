@@ -84,7 +84,7 @@ def settings(event):
 
 
 idButton = Button(root, image=idPhoto, relief="flat", borderwidth=0, highlightthickness=0,
-                  activebackground="#272727")
+                  activebackground="#272727", bg="#272727")
 idButton.bind('<Button-1>', settings)
 idButton.place(x=t, y=0)
 
