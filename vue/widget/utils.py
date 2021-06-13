@@ -39,56 +39,61 @@ def is_in_bound(bound, coord):
 class RatioKeeperContainer(Frame):
     def __init__(self, root, ratio, **kw):
         super().__init__(root, **kw)
-        self.ratio = ratio
+        self._ratio = ratio
 
         self.bind("<Configure>", self._on_config, add="+")
 
     def _on_config(self, event):
+        w = event.width
+        h = event.height
+        self._place_elem(w, h)
+
+    def set_ratio(self, ratio: float):
+        self._ratio = ratio
+        self._place_elem(self.winfo_width(), self.winfo_height())
+
+    def _place_elem(self, w: int, h: int):
         elem = self.winfo_children()[0]
         if elem is not None:
-            w = event.width
-            h = event.height
-            rw, rh = get_best_size(self.ratio, w, h)
+            rw, rh = get_best_size(self._ratio, w, h)
             elem.place(in_=self, x=(w - rw) / 2, y=(h - rh) / 2,
                        width=rw, height=rh)
 
 
-class AutoScrollbar(Scrollbar):
-    def set(self, lo, hi):
-        if float(lo) <= 0 and float(hi) >= 1:
-            self.grid_remove()
-        else:
-            self.grid()
-        Scrollbar.set(self, lo, hi)
-
-
 class ScrollableFrame(Frame):
     def __init__(self, master=None, *args, **kwargs):
-        self.container = Frame(master, bg="red")
+        self.container = Frame(master)
         self._canvas = Canvas(self.container)
-        self._scrollbar = Scrollbar(self.container, orient="vertical", command=self._canvas.yview)
+
+        self.scrollbar = Scrollbar(self.container, orient="vertical", command=self.set_yview)
 
         super().__init__(self._canvas, *args, **kwargs)
 
-        self.bind(
-            "<Configure>",
-            lambda e: self._canvas.configure(
-                scrollregion=self._canvas.bbox("all")
-            )
-        )
+        self.bind("<Configure>", self._on_config)
 
-        def canvas_config(event):
-            self._canvas.delete("all")
-            self._canvas.create_window((0, 0), window=self, anchor="nw", width=event.width)
+        self._canvas.bind("<Configure>", self._on_canvas_config, add="+")
 
-        self._canvas.bind(
-            "<Configure>",
-            canvas_config
-        )
-
-        self._canvas.configure(yscrollcommand=self._scrollbar.set)
+        self._canvas.configure(yscrollcommand=self.scrollbar.set)
 
         self._canvas.grid(sticky="nsew")
-        self._scrollbar.grid(row=0, column=1, sticky="ns")
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
         self.container.columnconfigure(0, weight=1)
         self.container.rowconfigure(0, weight=1)
+
+    def pack(self, *args, **kwargs):
+        return self.container.pack(*args, **kwargs)
+
+    def grid(self, *args, **kwargs):
+        return self.container.grid(*args, **kwargs)
+
+    def _on_config(self, event):
+        self._canvas.configure(scrollregion=self._canvas.bbox("all"))
+
+    def _on_canvas_config(self, event):
+        self._canvas.delete("all")
+        self._canvas.create_window((0, 0), window=self, anchor="nw", width=event.width)
+
+    def set_yview(self, *args):
+        yview = [i for i in args]
+        yview[1] = yview[1] if float(yview[1]) > 0 else "0.0"
+        return self._canvas.yview(*yview)

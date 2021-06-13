@@ -94,39 +94,68 @@ class GameGrid(Frame):
         super().__init__(root, **kw)
         games_widget = []
         containers = []
+        self._nb_col = 5
+        self._ratio = 0.65
+        self._nb_row = 0
         for subdir, dirs, files in os.walk("./imageBidon"):
-            nb_col = 5
-            j = 0
             for file in files:
                 filepath = subdir + os.sep + file
                 container = RatioKeeperContainer(self, 0.65)
                 widget = GameWidget(container, Image.open(filepath), file[:file.rfind(".")])
                 games_widget.append(widget)
-                container.grid(sticky="nsew", column=j % nb_col, row=j // nb_col, padx=10, pady=10)
                 containers.append(container)
-                Grid.columnconfigure(self, j % nb_col, weight=1)
-                Grid.rowconfigure(self, j // nb_col, weight=1)
-                j += 1
         self.game_widgets = games_widget
         self.containers = containers
+        self._place_containers()
+
+    def _place_containers(self):
+        self._nb_row = 0
+        j = 0
+        for container in self.containers:
+            container.grid(sticky="nsew", column=j % self._nb_col, row=j // self._nb_col, padx=10, pady=10)
+            Grid.columnconfigure(self, j % self._nb_col, weight=1, uniform="filled")
+            Grid.rowconfigure(self, j // self._nb_col, weight=1, uniform="filled")
+            j += 1
+        self._nb_row = j // self._nb_col
+
+    def _reset_grid(self):
+        j = 0
+        for container in self.containers:
+            container.grid_forget()
+            Grid.columnconfigure(self, j % self._nb_col, weight=0, uniform="empty")
+            Grid.rowconfigure(self, j // self._nb_col, weight=0, uniform="empty")
+            j += 1
+
+    def get_nb_row(self):
+        return self._nb_row
+
+    def set_nb_col(self, nb_col: int):
+        self._reset_grid()
+        self._nb_col = nb_col
+        self._place_containers()
+
+    def get_nb_col(self):
+        return self._nb_col
+
+    def get_ratio(self):
+        return self._ratio
 
 
 if __name__ == "__main__":
     root = Tk()
     root.configure(background='black')
-    sf = ScrollableFrame(root, bg="green")
+    sf = ScrollableFrame(root)
 
     cr = GameGrid(sf)
     cr.grid(sticky="nsew")
 
 
-    def _on_config(self, event):
-        print(event)
-
-
     def contconf(event):
-        w = event.width // 5
-        h = int(w / 0.65)
+        col = event.width // 150
+        if col != cr.get_nb_col():
+            cr.set_nb_col(col)
+        w = event.width // cr.get_nb_col()
+        h = int(w / cr.get_ratio())
         for c in cr.containers:
             c.config(height=h)
 
@@ -138,7 +167,7 @@ if __name__ == "__main__":
     )
 
     sf.columnconfigure(0, weight=1)
-    sf.container.grid(column=0, row=0, sticky="nsew")
+    sf.grid(column=0, row=0, sticky="nsew")
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
     root.geometry('840x640')

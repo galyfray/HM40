@@ -97,8 +97,11 @@ gd = GameGrid(g_frame)
 
 
 def contconf(event):
-    w = event.width // 5
-    h = int(w / 0.65)
+    col = event.width // 150
+    if col != gd.get_nb_col():
+        gd.set_nb_col(col)
+    w = event.width // gd.get_nb_col()
+    h = int(w / gd.get_ratio())
     for c in gd.containers:
         c.config(height=h)
 
