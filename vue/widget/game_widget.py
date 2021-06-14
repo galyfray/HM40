@@ -1,22 +1,22 @@
-import os
-
 from PIL import ImageTk
 
+from controlleur.game_controller import GameController
+from model.game import Game
 from utils import *
 
 
 class GameWidget(Frame):
-    def __init__(self, root, background_image: Image, name: str, **kw):
+    def __init__(self, root, game: Game, controller: GameController, **kw):
         super().__init__(root, **kw)
-        self.image_map = {"_base": background_image}
-        self.image_map["_main"] = ImageTk.PhotoImage(self.image_map["_base"])
-        self.image_map["base_play"] = Image.open("./play-button.png")
+
+        self._game = game
+        self._controller = controller
+
+        self.image_map = {"_main": ImageTk.PhotoImage(game.image), "base_play": Image.open("images/play-button.png")}
         self._mouse = False
 
         self._canvas = Canvas(self, bd=0, highlightthickness=0)
         self._canvas.pack(fill=BOTH, expand=1)
-
-        self.name = name
 
         self._click_map = {}
 
@@ -33,7 +33,7 @@ class GameWidget(Frame):
         self._click_map = {}
         w, h = self.winfo_width(), self.winfo_height()
 
-        iw, ih = self.image_map["_base"].size
+        iw, ih = self._game.image.size
         rw, rh = get_best_size(w / h, iw, ih)
 
         x_border = iw - rw
@@ -42,7 +42,7 @@ class GameWidget(Frame):
         start = (x_border / 2, y_border / 2)
         end = (start[0] + rw, start[1] + rh)
 
-        self.image_map["_main"] = self.image_map["_base"].crop((*start, *end)).resize((w, h))
+        self.image_map["_main"] = self._game.image.crop((*start, *end)).resize((w, h))
         self.image_map["_main"].putalpha(Image.new('L', self.image_map["_main"].size, 255))
 
         overlay = Image.new('RGBA', self.image_map["_main"].size, (0, 0, 0, 0))
@@ -55,7 +55,7 @@ class GameWidget(Frame):
         self.image_map["_main"] = ImageTk.PhotoImage(add_corners(self.image_map["_main"],
                                                                  max(int(w * 0.1), int(h * 0.1))))
         self._canvas.create_image((w / 2, h / 2), image=self.image_map["_main"])
-        text = self.name
+        text = self._game.name
         text_elem = self._canvas.create_text(int(w / 2), int((0.7 if self._mouse else 0.9) * h), fill="white",
                                              font=f"Times {int(h * 0.1)} italic bold",
                                              text=text, anchor="center")
@@ -82,6 +82,10 @@ class GameWidget(Frame):
 
     def run_game(self, event):
         print("the game is running")
+        self._controller.on_play_button_click(event, self)
+
+    def get_game(self):
+        return self._game
 
     def _on_click(self, event):
         for elem in self._click_map.keys():
@@ -90,20 +94,19 @@ class GameWidget(Frame):
 
 
 class GameGrid(Frame):
-    def __init__(self, root, **kw):
+    def __init__(self, root, game_list: "list[Game]", **kw):
         super().__init__(root, **kw)
         games_widget = []
         containers = []
         self._nb_col = 5
         self._ratio = 0.65
         self._nb_row = 0
-        for subdir, dirs, files in os.walk("./imageBidon"):
-            for file in files:
-                filepath = subdir + os.sep + file
-                container = RatioKeeperContainer(self, 0.65)
-                widget = GameWidget(container, Image.open(filepath), file[:file.rfind(".")])
-                games_widget.append(widget)
-                containers.append(container)
+        self._controller = GameController()
+        for game in game_list:
+            container = RatioKeeperContainer(self, 0.65)
+            widget = GameWidget(container, game, self._controller)
+            games_widget.append(widget)
+            containers.append(container)
         self.game_widgets = games_widget
         self.containers = containers
         self._place_containers()
@@ -146,7 +149,10 @@ if __name__ == "__main__":
     root.configure(background='black')
     sf = ScrollableFrame(root)
 
-    cr = GameGrid(sf)
+    builtins_games = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
+                      Game("Serpant", ["python3", "Snake/snake.py"])]
+
+    cr = GameGrid(sf, builtins_games)
     cr.grid(sticky="nsew")
 
 
