@@ -12,6 +12,7 @@ if __name__ == "__main__":
 
     root.title("Games Folder")
     root.wm_attributes("-topmost", 1)
+    root.iconphoto(True, PhotoImage(file='images/iconTri.png'))
 
     interface = Interface(root, borderwidth=10, background="dark blue")
     interface.grid(row=0, column=0, sticky="NE")
