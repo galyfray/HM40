@@ -14,17 +14,17 @@ class UpperStrip(Frame):
         self._stripUpper.pack(fill=BOTH, expand=1)
 
         # LOGO
-        self.logo = Image.open('logo.png')
+        self.logo = Image.open('images/logo.png')
         self.logo = self.logo.resize((150, 75), Image.ANTIALIAS)
         self.logo = ImageTk.PhotoImage(self.logo)
 
         # ID LOGO
-        self.idPhoto = Image.open('id.png')
+        self.idPhoto = Image.open('images/id.png')
         self.idPhoto = self.idPhoto.resize([73, 73], Image.ANTIALIAS)
         self.idPhoto = ImageTk.PhotoImage(self.idPhoto)
 
         # SETTINGS AND ID BUTTON
-        self.style = ttk.Style(root)
+        self.style = ttk.Style(self)
         self.style.configure("lefttab.TNotebook", tabposition="wn")
 
         self.mygrey = "#272727"
@@ -43,7 +43,7 @@ class UpperStrip(Frame):
         self.button = 0
         self.notebook = None
 
-        self.idButton = Button(root, image=self.idPhoto, relief="flat", borderwidth=0, highlightthickness=0,
+        self.idButton = Button(self, image=self.idPhoto, relief="flat", borderwidth=0, highlightthickness=0,
                                activebackground="#272727", bg="#272727")
         self.idButton.bind('<Button-1>', self._on_button_click)
 
