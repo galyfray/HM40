@@ -150,6 +150,22 @@ class GameGrid(Frame):
         self._reset_grid()
         self._place_containers()
 
+    def set_game_list(self, game_list: "list[Game]"):
+        self._set_game_list(game_list)
+        self._reset_grid()
+        self._place_containers()
+
+    def _set_game_list(self, game_list: "list[Game]"):
+        games_widget = []
+        containers = []
+        for game in game_list:
+            container = RatioKeeperContainer(self, 0.65)
+            widget = GameWidget(container, game, self._controller)
+            games_widget.append(widget)
+            containers.append(container)
+        self.game_widgets = games_widget
+        self.containers = containers
+
 
 if __name__ == "__main__":
     root = Tk()
