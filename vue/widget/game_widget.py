@@ -1,9 +1,7 @@
-from typing import *
-
 from PIL import ImageTk
 
 from controlleur.game_controller import GameController
-from model.game import Game
+from model.game import Game, GameList, GameListListener
 from vue.widget.utils import *
 
 
@@ -95,22 +93,20 @@ class GameWidget(Frame):
                 self._click_map[elem](event)
 
 
-class GameGrid(Frame):
-    def __init__(self, root, game_list: "list[Game]", **kw):
+class GameGrid(Frame, GameListListener):
+
+    def __init__(self, root, game_list: GameList, **kw):
         super().__init__(root, **kw)
-        games_widget = []
-        containers = []
+        self._game_list = game_list
+        self._game_list.register_listener(self)
+
         self._nb_col = 5
         self._ratio = 0.65
         self._nb_row = 0
         self._controller = GameController()
-        for game in game_list:
-            container = RatioKeeperContainer(self, 0.65)
-            widget = GameWidget(container, game, self._controller)
-            games_widget.append(widget)
-            containers.append(container)
-        self.game_widgets = games_widget
-        self.containers = containers
+        self.game_widgets = []
+        self.containers = []
+        self._build_containers()
         self._place_containers()
 
     def _place_containers(self):
@@ -145,20 +141,10 @@ class GameGrid(Frame):
     def get_ratio(self):
         return self._ratio
 
-    def sort_grid(self, key: Callable[[Game], Any], reverse: bool = False):
-        self.containers = sorted(self.containers, key=lambda c: key(c.winfo_children()[0].get_game()), reverse=reverse)
-        self._reset_grid()
-        self._place_containers()
-
-    def set_game_list(self, game_list: "list[Game]"):
-        self._set_game_list(game_list)
-        self._reset_grid()
-        self._place_containers()
-
-    def _set_game_list(self, game_list: "list[Game]"):
+    def _build_containers(self):
         games_widget = []
         containers = []
-        for game in game_list:
+        for game in self._game_list:
             container = RatioKeeperContainer(self, 0.65)
             widget = GameWidget(container, game, self._controller)
             games_widget.append(widget)
@@ -166,19 +152,27 @@ class GameGrid(Frame):
         self.game_widgets = games_widget
         self.containers = containers
 
+    def _destroy_containers(self):
+        for c in self.containers:
+            c.destroy()
+
+    def on_game_list_change(self, game_list: "GameList"):
+        self._reset_grid()
+        self._destroy_containers()
+        self._build_containers()
+        self._place_containers()
+
 
 if __name__ == "__main__":
     root = Tk()
     root.configure(background='black')
     sf = ScrollableFrame(root)
 
-    builtins_games = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpent", ["python3", "Snake/snake.py"])]
+    games = GameList()
+    games.load_from_file()
 
-    cr = GameGrid(sf, builtins_games)
+    cr = GameGrid(sf, games)
     cr.grid(sticky="nsew")
-
-    cr.sort_grid(lambda g: g.name, reverse=True)
 
 
     def contconf(event):

@@ -1,13 +1,14 @@
 import json
 import pickle
 import subprocess
-from typing import Callable, Any
+from abc import ABC, abstractmethod
+from typing import Callable, Any, Union
 
 from PIL import Image
 
 
 class Game(object):
-    def __init__(self, name: str = "", run_command="", image=None):
+    def __init__(self, name: str = "", run_command: Union['list[str]', str] = "", image=None):
         self.name = name
         self.run_command = run_command
         if image is None:
@@ -42,6 +43,12 @@ class Game(object):
         return self._process is not None and self._process.poll() is None
 
 
+class GameListListener(ABC):
+    @abstractmethod
+    def on_game_list_change(self, game_list: "GameList"):
+        pass
+
+
 class GameList(object):
 
     def __init__(self):
@@ -50,6 +57,10 @@ class GameList(object):
         self._currentList = []
         self._sorter = lambda g: g.name
         self._reverse = False
+        self._listeners = []
+
+    def __iter__(self):
+        return iter(self._currentList)
 
     def dump_to_file(self, filename="config/games.json"):
         data = {"filter": pickle.dumps(self._filter), "sorter": pickle.dumps(self._sorter), "reverse": self._reverse,
@@ -66,25 +77,28 @@ class GameList(object):
                     data = json.load(f)
                     f.close()
                     self._load_from_data(data)
+                    self._update_listeners()
                 except json.decoder.JSONDecodeError:
                     self.load_default()
         except FileNotFoundError:
             self.load_default()
 
     def load_default(self):
-        pass
+        self._list = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
+                      Game("Serpent", ["python3", "Snake/snake.py"])]
+        self._update_listeners()
 
     def _load_from_data(self, data: dict):
-        if "file_version" in data.keys():
+        if isinstance(data, dict) and "file_version" in data.keys():
             self._list = [Game().deserialize(d) for d in data["games"]]
-            self.set_filter(pickle.loads(data["filter"]))
-            self.set_sorter(pickle.loads(data["sorter"]), data["reverse"])
+            self._set_filter(pickle.loads(data["filter"]))
+            self._set_sorter(pickle.loads(data["sorter"]), data["reverse"])
         else:
             self._list = [Game().deserialize(d) for d in data]
-            self.set_filter(self._filter)
-            self.set_sorter(self._sorter, self._reverse)
+            self._set_filter(self._filter)
+            self._set_sorter(self._sorter, self._reverse)
 
-    def set_filter(self, filter: Callable[[Game], bool]):
+    def _set_filter(self, filter: Callable[[Game], bool]):
         self._filter = filter
         self._currentList = [g if filter(g) else None for g in self._list]
         try:
@@ -92,14 +106,31 @@ class GameList(object):
                 self._currentList.remove(None)
         except ValueError:
             pass
-        self.set_sorter(self._sorter, self._reverse)
+        self._set_sorter(self._sorter, self._reverse)
 
-    def set_sorter(self, sorter: Callable[[Game], Any], reverse=None):
+    def set_filter(self, filter: Callable[[Game], bool]):
+        self._set_filter(filter)
+        self._update_listeners()
+
+    def _set_sorter(self, sorter: Callable[[Game], Any], reverse=None):
         if reverse is None:
             reverse = self._reverse
         else:
             self._reverse = reverse
         self._currentList.sort(key=sorter, reverse=reverse)
 
+    def set_sorter(self, sorter: Callable[[Game], Any], reverse=None):
+        self._set_sorter(sorter, reverse)
+        self._update_listeners()
+
     def set_reverse(self, reverse: bool):
-        self.set_sorter(self._sorter, reverse)
+        self._set_sorter(self._sorter, reverse)
+        self._update_listeners()
+
+    def register_listener(self, listener: GameListListener):
+        if listener not in self._listeners:
+            self._listeners.append(listener)
+
+    def _update_listeners(self):
+        for li in self._listeners:
+            li.on_game_list_change(self)
