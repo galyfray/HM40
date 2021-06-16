@@ -150,7 +150,7 @@ if __name__ == "__main__":
     sf = ScrollableFrame(root)
 
     builtins_games = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpant", ["python3", "Snake/snake.py"])]
+                      Game("Serpent", ["python3", "Snake/snake.py"])]
 
     cr = GameGrid(sf, builtins_games)
     cr.grid(sticky="nsew")
