@@ -4,117 +4,98 @@ from tkinter import ttk
 
 from PIL import ImageTk, Image
 
-root = tk.Tk()
 
-root.title("Games Folder")
-root.wm_attributes("-topmost", 1)
+class UpperStrip(Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-# UPPER STRIP
-stripUpper = Canvas(root, width=root.winfo_screenwidth(), height=75, highlightthickness=0)
-stripUpper.pack()
+        # UPPER STRIP
+        self._stripUpper = Canvas(self, height=75, highlightthickness=0)
+        self._stripUpper.pack(fill=BOTH, expand=1)
 
-# STRIP
-t = root.winfo_screenwidth()
-print(t)
-t = t - 75
-stripUpper.create_rectangle(0, 0, t, 74, outline='#272727', fill='#272727')
+        # LOGO
+        self.logo = Image.open('logo.png')
+        self.logo = self.logo.resize((150, 75), Image.ANTIALIAS)
+        self.logo = ImageTk.PhotoImage(self.logo)
 
-# LOGO
-logo = Image.open('logo.png')
-logo = logo.resize((150, 75), Image.ANTIALIAS)
-logo = ImageTk.PhotoImage(logo)
-stripUpper.create_image(0, 0, image=logo, anchor="nw")
+        # ID LOGO
+        self.idPhoto = Image.open('id.png')
+        self.idPhoto = self.idPhoto.resize([73, 73], Image.ANTIALIAS)
+        self.idPhoto = ImageTk.PhotoImage(self.idPhoto)
 
-# ID NAME
-stripUpper.create_text(t - 100, 35, text='My game ID', fill='white', anchor="n")
+        # SETTINGS AND ID BUTTON
+        self.style = ttk.Style(root)
+        self.style.configure("lefttab.TNotebook", tabposition="wn")
 
-# ID LOGO
-idPhoto = Image.open('id.png')
-idPhoto = idPhoto.resize([75, 75], Image.ANTIALIAS)
-idPhoto = ImageTk.PhotoImage(idPhoto)
+        self.mygrey = "#272727"
+        self.mywhite = "white"
 
-# SETTINGS AND ID BUTTON
-style = ttk.Style(root)
-style.configure("lefttab.TNotebook", tabposition="wn")
+        self.style.theme_create("yummy", parent="alt", settings={
+            "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0]}},
+            "TNotebook.Tab": {
+                "configure": {"padding": [5, 1], "background": self.mygrey, "foreground": self.mywhite},
+                "map": {"background": [("selected", self.mywhite)],
+                        "foreground": [("selected", self.mygrey)],
+                        "expand": [("selected", [1, 1, 1, 0])]}}})
 
-mygrey = "#272727"
-mywhite = "white"
+        self.style.theme_use("yummy")
 
-style.theme_create("yummy", parent="alt", settings={
-    "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0]}},
-    "TNotebook.Tab": {
-        "configure": {"padding": [5, 1], "background": mygrey, "foreground": mywhite},
-        "map": {"background": [("selected", mywhite)],
-                "foreground": [("selected", mygrey)],
-                "expand": [("selected", [1, 1, 1, 0])]}}})
+        self.button = 0
+        self.notebook = None
 
-style.theme_use("yummy")
+        self.idButton = Button(root, image=self.idPhoto, relief="flat", borderwidth=0, highlightthickness=0,
+                               activebackground="#272727", bg="#272727")
+        self.idButton.bind('<Button-1>', self._on_button_click)
 
-button = 0
-notebook = None
+        self._re_draw()
+        self.bind("<Configure>", self._on_config)
 
+    def _on_config(self, event):
+        self._re_draw()
 
-def settings(event):
-    # TODO utiliser une classe pour stocker des infos dans self au lieux des var global
-    global button
-    global notebook
-    if button == 0:
-        notebook = ttk.Notebook(None, style="lefttab.TNotebook")
+    def _re_draw(self):
+        self._stripUpper.delete("all")
+        # STRIP
+        t = self.winfo_width()
+        t = t - 75
+        self._stripUpper.create_rectangle(0, 0, t, 75, outline='#272727', fill='#272727')
+        self._stripUpper.create_image(0, 0, image=self.logo, anchor="nw")
+        # ID NAME
+        self._stripUpper.create_text(t - 100, 35, text='My game ID', fill='white', anchor="n")
+        self.idButton.place(x=t, y=0)
 
-        f1 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
-        f2 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
-        f3 = tk.Frame(notebook, bg=mygrey, width=300, height=400)
+    def _on_button_click(self, event):
+        if self.button == 0:
+            self.notebook = ttk.Notebook(None, style="lefttab.TNotebook")
 
-        text1 = Label(f1, text="On doit mettre quoi ici ?", bg=mygrey, fg=mywhite).pack()
-        # text2 = Label(f2, text="Et là ?", bg=mygrey, fg=mywhite).pack()
-        # text3 = Label(f3, text="Et ici ?", bg=mygrey, fg=mywhite).pack()
+            f1 = tk.Frame(self.notebook, bg=self.mygrey, width=300, height=400)
+            f2 = tk.Frame(self.notebook, bg=self.mygrey, width=300, height=400)
+            f3 = tk.Frame(self.notebook, bg=self.mygrey, width=300, height=400)
 
-        # add what you want in each Frame
+            text1 = Label(f1, text="On doit mettre quoi ici ?", bg=self.mygrey, fg=self.mywhite).pack()
+            # text2 = Label(f2, text="Et là ?", bg=mygrey, fg=mywhite).pack()
+            # text3 = Label(f3, text="Et ici ?", bg=mygrey, fg=mywhite).pack()
 
-        notebook.add(f1, text="Mon Compte ")
-        notebook.add(f2, text="Déconnexion")
-        notebook.add(f3, text="Paramètres ")
-        notebook.place(x=root.winfo_screenwidth() - 300, y=75, width=300, height=400)
-        notebook.lift()
-        button = 1
-    else:
-        notebook.destroy()
-        button = 0
-    pass
+            # add what you want in each Frame
 
-
-idButton = Button(root, image=idPhoto, relief="flat", borderwidth=0, highlightthickness=0,
-                  activebackground="#272727", bg="#272727")
-idButton.bind('<Button-1>', settings)
-idButton.place(x=t, y=0)
-
-from game_widget import GameGrid
-from utils import ScrollableFrame
-
-g_frame = ScrollableFrame(root, bg="blue")
-
-gd = GameGrid(g_frame)
+            self.notebook.add(f1, text="Mon Compte ")
+            self.notebook.add(f2, text="Déconnexion")
+            self.notebook.add(f3, text="Paramètres ")
+            self.notebook.place(x=self.winfo_width() - 300, y=75, width=300, height=400)
+            self.notebook.lift()
+            self.button = 1
+        else:
+            self.notebook.destroy()
+            self.button = 0
 
 
-def contconf(event):
-    col = event.width // 150
-    if col != gd.get_nb_col():
-        gd.set_nb_col(col)
-    w = event.width // gd.get_nb_col()
-    h = int(w / gd.get_ratio())
-    for c in gd.containers:
-        c.config(height=h)
+if __name__ == "__main__":
+    root = tk.Tk()
 
+    root.title("Games Folder")
+    root.wm_attributes("-topmost", 1)
 
-g_frame.bind(
-    "<Configure>",
-    contconf,
-    add="+"
-)
+    strip = UpperStrip(root, bg="blue")
+    strip.pack(expand=YES, fill="x", anchor="n")
 
-g_frame.container.pack(fill=BOTH, expand=1, side=BOTTOM)
-gd.grid(sticky="nsew")
-g_frame.columnconfigure(0, weight=1)
-g_frame.rowconfigure(0, weight=1)
-
-root.mainloop()
+    root.mainloop()
