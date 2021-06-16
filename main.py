@@ -27,7 +27,7 @@ if __name__ == "__main__":
             gameList = json.load(f)
             print(gameList)
             gameList = [Game().deserialize(d) for d in gameList]
-    except json.decoder.JSONDecodeError:
+    except BaseException:
         gameList = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
                     Game("Serpent", ["python3", "Snake/snake.py"])]
 
