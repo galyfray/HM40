@@ -1,51 +1,54 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-class Interface():
 
-    #fenêtre
+
+class Interface():
+    # fenêtre
     fen = tk.Tk()
-    #Titre
+    # Titre
     fen.title("Game Folder")
 
-    #Icone
-    fen.iconbitmap('images/icone.ico') #solution1
+    # Icone
+    fen.iconbitmap('images/icone.ico')  # solution1
 
-    #icone = tk.PhotoImage(file='images/icone.gif')  # solution2
-    #fen.iconphoto(True, icone)
+    # icone = tk.PhotoImage(file='images/icone.gif')  # solution2
+    # fen.iconphoto(True, icone)
 
-    #Geometry
+    # Geometry
     fen.geometry("900x600")
-    #fen.iconbitmap("") #icon de fenêtre
-    #fen.config(background = "blue") #configuration
-    #fen.resizable(width=True, height = True)#redimensionnement
-    #____________Frame Menu_____________
-    frame_menu = tk.Frame(fen, borderwidth=10 )
+    # fen.iconbitmap("") #icon de fenêtre
+    # fen.config(background = "blue") #configuration
+    # fen.resizable(width=True, height = True)#redimensionnement
+    # ____________Frame Menu_____________
+    frame_menu = tk.Frame(fen, borderwidth=10, background="dark blue")
     frame_menu.grid(row=0, column=0, sticky="E")
-    #___Image___
+    # ___Image___
     image_logo = Image.open("images/logo.png")
-    image_logo = image_logo.resize((160,140))
+    image_logo = image_logo.resize((160, 140))
     img = ImageTk.PhotoImage(image_logo)
-    logo = tk.Label(frame_menu,image=img)
-    #logo.grid(row=0, sticky=tk.W)
-    logo.pack(fill=tk.BOTH,expand=tk.YES)
-    #___Frame Label Trier par___
+    logo = tk.Label(frame_menu, image=img)
+    # logo.grid(row=0, sticky=tk.W)
+    logo.pack(side="top", fill="both", expand="yes")
+    # ___Frame Label Trier par___
     Trier_par = tk.LabelFrame(frame_menu, text="Trier par")
-    #___Buttons Radio___
+    # ___Buttons Radio___
 
     tri = tk.IntVar(value=1)
 
-    tk.Radiobutton(Trier_par, text="Ordre Alphabétique", variable=tri, value=1).grid(row=0, sticky=tk.W)
-    tk.Radiobutton(Trier_par, text="Plus récent", variable=tri, value=2).grid(row=1, sticky=tk.W)
-    tk.Radiobutton(Trier_par, text="Plus joué", variable=tri, value=3).grid(row=2, sticky=tk.W)
-    tk.Radiobutton(Trier_par, text="Moins joué", variable=tri, value=4).grid(row=3, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Ordre Alphabétique", indicatoron=0, background="light blue", width=20, padx=20, variable=tri, value=1).grid(row=0, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Plus récent", indicatoron=0, background="light blue", width=20, padx=20, variable=tri, value=2).grid(row=1, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Plus joué", indicatoron=0, background="light blue", width=20, padx=20, variable=tri, value=3).grid(row=2, sticky=tk.W)
+    tk.Radiobutton(Trier_par, text="Moins joué", indicatoron=0, background="light blue", width=20, padx=20,  variable=tri, value=4).grid(row=3, sticky=tk.W)
 
-    Trier_par.pack(fill=tk.BOTH, expand=tk.YES)
+    Trier_par.pack()
 
-    #___Button Fonctionnalitées___
+    # ___Button Fonctionnalitées___
     button_Jeu_aleatoire = tk.Button(frame_menu, text="Jeu aléatoire")
-    button_Jeu_aleatoire.pack(fill=tk.BOTH,expand=tk.YES)
+    button_Jeu_aleatoire.pack(fill=tk.BOTH, expand=tk.YES)
     button_Autre_Fonction = tk.Button(frame_menu, text="Autre Fonctions...")
-    button_Autre_Fonction.pack(fill=tk.BOTH,expand=tk.YES)
+    button_Autre_Fonction.pack(fill=tk.BOTH, expand=tk.YES)
+
+    """
     #____________Frame Générale_____________
     frame_generale = tk.Frame(fen)
     frame_generale.grid(row = 0, column=1)
@@ -93,7 +96,9 @@ class Interface():
     label_credits.pack(side=tk.BOTTOM)
 
     #def __init__(self):
+    """
 
-#main Pour tester l'interface
+
+# main Pour tester l'interface
 interface = Interface()
 interface.fen.mainloop()
