@@ -21,15 +21,16 @@ class Game(object):
 
     def serialize(self) -> dict:
         return {"name": self.name, "run_command": self.run_command,
-                "image": self.image.fp.name if self.image is not None else ""}
+                "image": self.image.filename if self.image is not None else ""}
 
-    def deserialize(self, data: dict) -> None:
+    def deserialize(self, data: dict) -> "Game":
         self.name = data["name"]
         try:
             self.image = Image.open(data["image"])
         except FileNotFoundError as e:
             self.image = Image.open("images/default.png")
         self.run_command = data["run_command"]
+        return self
 
     def run(self):
         self._process = subprocess.Popen(self.run_command)

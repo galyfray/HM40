@@ -1,3 +1,4 @@
+import json
 from tkinter import *
 
 from ViewInterface import Interface
@@ -21,11 +22,16 @@ if __name__ == "__main__":
     r_frame.grid(row=0, column=1, sticky="nsew")
 
     sf = ScrollableFrame(r_frame)
+    try:
+        with open("config/games.json", "r") as f:
+            gameList = json.load(f)
+            print(gameList)
+            gameList = [Game().deserialize(d) for d in gameList]
+    except json.decoder.JSONDecodeError:
+        gameList = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
+                    Game("Serpent", ["python3", "Snake/snake.py"])]
 
-    builtins_games = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpent", ["python3", "Snake/snake.py"])]
-
-    cr = GameGrid(sf, builtins_games)
+    cr = GameGrid(sf, gameList)
     cr.grid(sticky="nsew")
 
     cr.sort_grid(lambda g: g.name, reverse=True)
@@ -57,4 +63,15 @@ if __name__ == "__main__":
     root.rowconfigure(0, weight=1)
 
     root.geometry("900x600")
+
+
+    def on_close():
+        with open("config/games.json", "w+") as f:
+            json.dump([g.serialize() for g in gameList], f, sort_keys=True, indent=4)
+            f.close()
+        root.destroy()
+
+
+    root.protocol("WM_DELETE_WINDOW", on_close)
+
     root.mainloop()
