@@ -10,7 +10,11 @@ class Game(object):
         if image is None:
             self.image = Image.open("images/default.png")
         elif isinstance(image, str):
-            self.image = Image.open(image)
+            try:
+                self.image = Image.open(image)
+            except FileNotFoundError as e:
+                self.image = Image.open("images/default.png")
+
         elif isinstance(image, Image.Image):
             self.image = image
         self._process = None
@@ -21,7 +25,10 @@ class Game(object):
 
     def deserialize(self, data: dict) -> None:
         self.name = data["name"]
-        self.image = Image.open(data["image"])
+        try:
+            self.image = Image.open(data["image"])
+        except FileNotFoundError as e:
+            self.image = Image.open("images/default.png")
         self.run_command = data["run_command"]
 
     def run(self):
