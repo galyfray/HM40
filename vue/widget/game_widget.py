@@ -1,3 +1,5 @@
+from typing import *
+
 from PIL import ImageTk
 
 from controlleur.game_controller import GameController
@@ -143,6 +145,11 @@ class GameGrid(Frame):
     def get_ratio(self):
         return self._ratio
 
+    def sort_grid(self, key: Callable[[Game], Any], reverse: bool = False):
+        self.containers = sorted(self.containers, key=lambda c: key(c.winfo_children()[0].get_game()), reverse=reverse)
+        self._reset_grid()
+        self._place_containers()
+
 
 if __name__ == "__main__":
     root = Tk()
@@ -150,10 +157,12 @@ if __name__ == "__main__":
     sf = ScrollableFrame(root)
 
     builtins_games = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpant", ["python3", "Snake/snake.py"])]
+                      Game("Serpent", ["python3", "Snake/snake.py"])]
 
     cr = GameGrid(sf, builtins_games)
     cr.grid(sticky="nsew")
+
+    cr.sort_grid(lambda g: g.name, reverse=True)
 
 
     def contconf(event):
