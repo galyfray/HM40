@@ -100,6 +100,7 @@ class GameList(object):
     def load_default(self):
         self._list = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
                       Game("Serpent", ["python3", "Snake/snake.py"])]
+        self._currentList = self._list.copy()
         self._update_listeners()
 
     def _load_from_data(self, data: dict):
