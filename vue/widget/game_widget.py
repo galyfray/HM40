@@ -4,7 +4,7 @@ from PIL import ImageTk
 
 from controlleur.game_controller import GameController
 from model.game import Game
-from utils import *
+from vue.widget.utils import *
 
 
 class GameWidget(Frame):
