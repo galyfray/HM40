@@ -31,7 +31,7 @@ class Game(object):
         self.name = data["name"]
         try:
             self.image = Image.open(data["image"])
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             self.image = Image.open("images/default.png")
         self.run_command = data["run_command"]
         return self
@@ -49,13 +49,26 @@ class GameListListener(ABC):
         pass
 
 
+class GameSorter(object):
+
+    @staticmethod
+    def name_sort(game: Game):
+        return game.name
+
+
+class GameFilter(object):
+    @staticmethod
+    def empty_filter(game: Game) -> bool:
+        return True
+
+
 class GameList(object):
 
     def __init__(self):
         self._list = []
-        self._filter = lambda e: True
+        self._filter = GameFilter.empty_filter
         self._currentList = []
-        self._sorter = lambda g: g.name
+        self._sorter = GameSorter.name_sort
         self._reverse = False
         self._listeners = []
 
@@ -63,7 +76,8 @@ class GameList(object):
         return iter(self._currentList)
 
     def dump_to_file(self, filename="config/games.json"):
-        data = {"filter": pickle.dumps(self._filter), "sorter": pickle.dumps(self._sorter), "reverse": self._reverse,
+        data = {"filter": pickle.dumps(self._filter).hex(), "sorter": pickle.dumps(self._sorter).hex(),
+                "reverse": self._reverse,
                 "games": [g.serialize() for g in self._list], "file_version": "1.0"}
 
         with open(filename, "w+") as f:
@@ -91,8 +105,8 @@ class GameList(object):
     def _load_from_data(self, data: dict):
         if isinstance(data, dict) and "file_version" in data.keys():
             self._list = [Game().deserialize(d) for d in data["games"]]
-            self._set_filter(pickle.loads(data["filter"]))
-            self._set_sorter(pickle.loads(data["sorter"]), data["reverse"])
+            self._set_filter(pickle.loads(bytearray.fromhex(data["filter"])))
+            self._set_sorter(pickle.loads(bytearray.fromhex(data["sorter"])), data["reverse"])
         else:
             self._list = [Game().deserialize(d) for d in data]
             self._set_filter(self._filter)

@@ -1,8 +1,7 @@
-import json
 from tkinter import *
 
 from ViewInterface import Interface
-from model.game import Game
+from model.game import GameList
 from vue.widget.game_widget import GameGrid
 from vue.widget.upperStrip_connexion import UpperStrip
 from vue.widget.utils import ScrollableFrame
@@ -23,19 +22,14 @@ if __name__ == "__main__":
     r_frame.grid(row=0, column=1, sticky="nsew")
 
     sf = ScrollableFrame(r_frame)
-    try:
-        with open("config/games.json", "r") as f:
-            gameList = json.load(f)
-            print(gameList)
-            gameList = [Game().deserialize(d) for d in gameList]
-    except BaseException:
-        gameList = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                    Game("Serpent", ["python3", "Snake/snake.py"])]
+
+    gameList = GameList()
+    gameList.load_from_file()
 
     cr = GameGrid(sf, gameList)
     cr.grid(sticky="nsew")
 
-    cr.sort_grid(lambda g: g.name, reverse=True)
+    gameList.set_reverse(True)
 
 
     def contconf(event):
@@ -67,9 +61,7 @@ if __name__ == "__main__":
 
 
     def on_close():
-        with open("config/games.json", "w+") as f:
-            json.dump([g.serialize() for g in gameList], f, sort_keys=True, indent=4)
-            f.close()
+        gameList.dump_to_file()
         root.destroy()
 
 
