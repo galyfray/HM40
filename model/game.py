@@ -1,4 +1,5 @@
 import json
+import os
 import pickle
 import subprocess
 from abc import ABC, abstractmethod
@@ -79,6 +80,12 @@ class GameList(object):
         data = {"filter": pickle.dumps(self._filter).hex(), "sorter": pickle.dumps(self._sorter).hex(),
                 "reverse": self._reverse,
                 "games": [g.serialize() for g in self._list], "file_version": "1.0"}
+
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError:  # Guard against race condition
+                return
 
         with open(filename, "w+") as f:
             json.dump(data, f, sort_keys=True, indent=4)
