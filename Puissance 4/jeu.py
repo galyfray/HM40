@@ -239,11 +239,34 @@ def verif():
 
     return
 
+def start_again():
+
+
+    global fen3
+    global grille
+    global fen1
+
+    fen3.destroy()
+    grille = [['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-']]
+    
+    fen1.update()
+    afficher(grille)
+
+
+    return
+
+    
+
 def fin (gagant):     #Fonction qui permet l'arrêt du jeu et la fermeture de la fenêtre principale avec affichage d'une fenêtre secondaire
 
     fen3 = Tk()
 
-    fen3.title(" Fin du jeu ")
+    fen3.title("Fin du jeu")
     fen3.focus_set()
 
     label_fin1 = Label(fen3, text=" ")
@@ -256,25 +279,12 @@ def fin (gagant):     #Fonction qui permet l'arrêt du jeu et la fermeture de la
     label_fin3.grid()
 
     fen3.wm_attributes("-topmost", 1)   #permet un affichage au 1er plan
+    
+    fen3.protocol("WM_DELETE_WINDOW", start_again)
+    
     fen3.mainloop()
 
-    init()
-
     return
-
-def init():
-
-    grille = [['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-']]
-
-    afficher(grille)
-
-    return 
-    
 
 ################################### MAIN #######################################
 
@@ -301,5 +311,4 @@ tour = 0
 
 clickPion()
 
-init()
-
+fen1.mainloop()
