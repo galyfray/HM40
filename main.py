@@ -2,6 +2,7 @@ from tkinter import *
 
 from ViewInterface import Interface
 from model.game import GameList
+from vue.widget.folder_bar import FolderBar
 from vue.widget.game_widget import GameGrid
 from vue.widget.upperStrip_connexion import UpperStrip
 from vue.widget.utils import ScrollableFrame
@@ -17,11 +18,16 @@ if __name__ == "__main__":
     interface.grid(row=0, column=0, sticky="NE")
 
     r_frame = Frame(bg="green")
-    strip = UpperStrip(r_frame, bg="blue")
-    strip.grid(row=0, column=0, stick="ew")
     r_frame.grid(row=0, column=1, sticky="nsew")
 
+    strip = UpperStrip(r_frame, bg="blue")
+    strip.grid(row=0, column=0, stick="ew")
+
+    folders = FolderBar(r_frame)
+    folders.grid(row=1, column=0, stick="ew")
+
     sf = ScrollableFrame(r_frame)
+    sf.grid(row=2, column=0, stick="nsew")
 
     gameList = GameList()
     gameList.load_from_file()
@@ -49,10 +55,9 @@ if __name__ == "__main__":
     )
 
     sf.columnconfigure(0, weight=1)
-    sf.grid(row=1, column=0, stick="nsew")
 
     r_frame.columnconfigure(0, weight=1)
-    r_frame.rowconfigure(1, weight=1)
+    r_frame.rowconfigure(2, weight=1)
 
     root.columnconfigure(1, weight=1)
     root.rowconfigure(0, weight=1)

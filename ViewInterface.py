@@ -40,51 +40,7 @@ class Interface(tk.Frame):
         button_Autre_Fonction.pack(fill=tk.BOTH, expand=tk.YES)
 
         """
-        #____________Frame Générale_____________
-        frame_generale = tk.Frame(fen)
-        frame_generale.grid(row = 0, column=1)
-        #_______Frame Top_______
-        frame_top = tk.Frame(frame_generale)
-        frame_top.pack()
-        # ___Image___
-        image_logo2 = Image.open("images/logo.png")
-        image_logo2 = image_logo2.resize((80, 70))
-        img2 = ImageTk.PhotoImage(image_logo2)
-        logo2 = tk.Label(frame_top, image=img2)
-        logo2.grid(row=0,column=0,sticky=tk.W)
-        #___Label UserName___
-        label_username = tk.Label(frame_top, text="Username")
-        label_username.grid(row=0,column=2,sticky=tk.E)
-        #_______Frame Catégorie_______
-        frame_categorie = tk.Frame(frame_generale)
-        frame_categorie.pack()
-        #___Button Favoris___
-        button_fav = tk.Button(frame_categorie,text="Favoris")
-        button_fav.grid(row=0, column=0)
-        # ___Button Tout___
-        button_tout = tk.Button(frame_categorie, text="Tout")
-        button_tout.grid(row=0, column=1)
-        # ___Button Aventure___
-        button_aventure = tk.Button(frame_categorie, text="Aventure")
-        button_aventure.grid(row=0, column=2)
-        # ___Button Solo___
-        button_solo = tk.Button(frame_categorie, text="Solo")
-        button_solo.grid(row=0, column=3)
-        # ___Button Action___
-        button_action = tk.Button(frame_categorie, text="Action")
-        button_action.grid(row=0, column=4)
-        #______Frame Game_______
-        frame_game = tk.Frame(frame_generale)
-        frame_game.pack()
-        #Ajouter la partie de Cyril
-    
-    
-        #______Frame Bottom_______
-        frame_bottom = tk.Frame(frame_generale)
-        frame_bottom.pack()
-        #___Label Crédits___
-        label_credits = tk.Label(frame_bottom, text="Réaliser par Marie, Cyril, Romain, Baptiste dans le cadre de l'UV HM40")
-        label_credits.pack(side=tk.BOTTOM)
+
     
         #def __init__(self):
         """
