@@ -63,11 +63,11 @@ class RatioKeeperContainer(Frame):
 class ScrollableFrame(Frame):
     def __init__(self, master=None, *args, **kwargs):
         self.container = Frame(master)
-        self._canvas = Canvas(self.container)
+        self._canvas = Canvas(self.container, **kwargs)
 
         self.scrollbar = Scrollbar(self.container, orient="vertical", command=self.set_yview)
 
-        super().__init__(self._canvas, *args, **kwargs)
+        super().__init__(self._canvas, *args)
 
         self.bind("<Configure>", self._on_config)
 

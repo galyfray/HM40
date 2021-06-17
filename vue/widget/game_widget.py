@@ -21,7 +21,7 @@ class GameWidget(Frame):
 
         # canvas setup
 
-        self._canvas = Canvas(self, bd=0, highlightthickness=0)
+        self._canvas = Canvas(self, bd=0, highlightthickness=0, **kw)
         self._canvas.pack(fill=BOTH, expand=1)
 
         # Binding events
@@ -127,8 +127,9 @@ class GameWidget(Frame):
 class GameGrid(Frame, GameListListener):
 
     def __init__(self, root, game_list: GameList, **kw):
-        super().__init__(root, **kw)
+        self.bg = "#474747"
 
+        super().__init__(root, background=self.bg, **kw)
         self._game_list = game_list
         self._game_list.register_listener(self)
         self._controller = GameController()
@@ -180,8 +181,8 @@ class GameGrid(Frame, GameListListener):
         games_widget = []
         containers = []
         for game in self._game_list:
-            container = RatioKeeperContainer(self, 0.65)
-            widget = GameWidget(container, game, self._controller)
+            container = RatioKeeperContainer(self, 0.65, background=self.bg)
+            widget = GameWidget(container, game, self._controller, background=self.bg)
             games_widget.append(widget)
             containers.append(container)
         self.game_widgets = games_widget

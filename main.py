@@ -26,7 +26,7 @@ if __name__ == "__main__":
     folders = FolderBar(r_frame)
     folders.grid(row=1, column=0, stick="ew")
 
-    sf = ScrollableFrame(r_frame)
+    sf = ScrollableFrame(r_frame, background="#474747")
     sf.grid(row=2, column=0, stick="nsew")
 
     gameList = GameList()
