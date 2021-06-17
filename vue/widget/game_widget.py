@@ -12,13 +12,19 @@ class GameWidget(Frame):
         self._game = game
         self._controller = controller
 
-        self.image_map = {"_main": ImageTk.PhotoImage(game.image), "base_play": Image.open("images/play-button.png")}
         self._mouse = False
+
+        # setup maps
+
+        self._click_map = {}
+        self.image_map = {"_main": ImageTk.PhotoImage(game.image), "base_play": Image.open("images/play-button.png")}
+
+        # canvas setup
 
         self._canvas = Canvas(self, bd=0, highlightthickness=0)
         self._canvas.pack(fill=BOTH, expand=1)
 
-        self._click_map = {}
+        # Binding events
 
         self.bind("<Configure>", self._on_config, add="+")
         self.bind("<Enter>", self.on_enter, add="+")
@@ -31,6 +37,9 @@ class GameWidget(Frame):
     def re_draw(self):
         self._canvas.delete('all')
         self._click_map = {}
+
+        # compute best image crop size
+
         w, h = self.winfo_width(), self.winfo_height()
 
         iw, ih = self._game.image.size
@@ -42,34 +51,56 @@ class GameWidget(Frame):
         start = (x_border / 2, y_border / 2)
         end = (start[0] + rw, start[1] + rh)
 
+        # crop image
+
         self.image_map["_main"] = self._game.image.crop((*start, *end)).resize((w, h))
         self.image_map["_main"].putalpha(Image.new('L', self.image_map["_main"].size, 255))
+
+        # draw grey overlay
 
         overlay = Image.new('RGBA', self.image_map["_main"].size, (0, 0, 0, 0))
 
         draw = ImageDraw.Draw(overlay)  # Create a context for drawing things on it.
         draw.rectangle(((0, int(h * (0.6 if self._mouse else 0.8))), (w, h)), fill=(50, 50, 50, 200))
 
+        # put grey overlay on base image
+
         self.image_map["_main"] = Image.alpha_composite(self.image_map["_main"], overlay)
+
+        # rounding coreners
 
         self.image_map["_main"] = ImageTk.PhotoImage(add_corners(self.image_map["_main"],
                                                                  max(int(w * 0.1), int(h * 0.1))))
+
+        # placing the image
+
         self._canvas.create_image((w / 2, h / 2), image=self.image_map["_main"])
+
+        # showing the name of the game
+
         text = self._game.name
         text_elem = self._canvas.create_text(int(w / 2), int((0.7 if self._mouse else 0.9) * h), fill="white",
                                              font=f"Times {int(h * 0.1)} italic bold",
                                              text=text, anchor="center")
+
+        # crop the text to the maximum we can show
+
         text_bounds = self._canvas.bbox(text_elem)
         while text_bounds[2] - text_bounds[0] > w * 0.95 and len(text) > 3:
             text = text[:-4] + "..."
             self._canvas.itemconfigure(text_elem, text=text)
             text_bounds = self._canvas.bbox(text_elem)
 
+        # add play button if needed
+
         if self._mouse:
             s = int(min(h, w) * 0.25)
             self.image_map["_play"] = ImageTk.PhotoImage(self.image_map["base_play"].resize((s, s)))
             img = self._canvas.create_image((int(w - 0.6 * s), int(text_bounds[3] + 0.5 * s)),
                                             image=self.image_map["_play"])
+
+            # map the button to it's function
+
             self._click_map[self._canvas.bbox(img)] = self.run_game
 
     def on_enter(self, event):
@@ -97,15 +128,19 @@ class GameGrid(Frame, GameListListener):
 
     def __init__(self, root, game_list: GameList, **kw):
         super().__init__(root, **kw)
+
         self._game_list = game_list
         self._game_list.register_listener(self)
-
-        self._nb_col = 5
-        self._ratio = 0.65
-        self._nb_row = 0
         self._controller = GameController()
+
+        self._nb_row = 0
+        self._nb_col = 5
+
+        self._ratio = 0.65
+
         self.game_widgets = []
         self.containers = []
+
         self._build_containers()
         self._place_containers()
 
