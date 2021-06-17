@@ -6,20 +6,20 @@ class FolderBar(Frame):
         super().__init__(*args, **kwargs)
 
         # ___Button Favoris___
-        button_fav = Button(self, text="Favoris")
-        button_fav.grid(row=0, column=0)
+        button_fav = Button(self, text="Favoris", bg="#0A464D", fg="white", font=f"Times 12 bold")
+        button_fav.grid(row=0, column=0, ipadx=40, ipady=10)
         # ___Button Tout___
-        button_tout = Button(self, text="Tout")
-        button_tout.grid(row=0, column=1)
+        button_tout = Button(self, text="Tout", bg="#0A464D", fg="white", font=f"Times 12 bold")
+        button_tout.grid(row=0, column=1, ipadx=40, ipady=10)
         # ___Button Aventure___
-        button_aventure = Button(self, text="Aventure")
-        button_aventure.grid(row=0, column=2)
+        button_aventure = Button(self, text="Aventure", bg="#0A464D", fg="white", font=f"Times 12 bold")
+        button_aventure.grid(row=0, column=2, ipadx=40, ipady=10)
         # ___Button Solo___
-        button_solo = Button(self, text="Solo")
-        button_solo.grid(row=0, column=3)
+        button_solo = Button(self, text="Solo", bg="#0A464D", fg="white", font=f"Times 12 bold")
+        button_solo.grid(row=0, column=3, ipadx=40, ipady=10)
         # ___Button Action___
-        button_action = Button(self, text="Action")
-        button_action.grid(row=0, column=4)
+        button_action = Button(self, text="Action", bg="#0A464D", fg="white", font=f"Times 12 bold")
+        button_action.grid(row=0, column=4, ipadx=40, ipady=10)
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     root.wm_attributes("-topmost", 1)
     root.iconphoto(True, PhotoImage(file='images/iconTri.png'))
 
-    interface = Interface(root, borderwidth=10, background="dark blue")
+    interface = Interface(root, borderwidth=10, background="#272727")
     interface.grid(row=0, column=0, sticky="NE")
 
     r_frame = Frame(bg="green")
