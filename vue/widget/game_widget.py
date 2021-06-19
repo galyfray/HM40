@@ -78,7 +78,7 @@ class GameWidget(Frame):
 
         # showing the name of the game
 
-        text = self._game.name
+        text = self._game._name
         text_elem = self._canvas.create_text(int(w / 2), int((0.7 if self._mouse else 0.9) * h), fill="white",
                                              font=f"Times {int(h * 0.1)} italic bold",
                                              text=text, anchor="center")
