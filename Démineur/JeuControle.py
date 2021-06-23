@@ -68,7 +68,7 @@ def victory0rLose():
         label_titre_lose.pack()
         frame_result.pack()
         frame_bottom.pack()
-        fen.geometry("150x100")
+        # fen.geometry("150x100")
         return 1
     if game.get_reaveled() == game.fieldMines and game.get_explosions() == 0:
         frame_general.pack_forget()
@@ -76,7 +76,7 @@ def victory0rLose():
         label_titre_win.pack()
         frame_result.pack()
         frame_bottom.pack()
-        fen.geometry("150x100")
+        # fen.geometry("150x100")
         return 1
 
 
