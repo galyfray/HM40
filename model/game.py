@@ -142,7 +142,7 @@ class GameList(GameEventListener):
         if not os.path.exists(os.path.dirname(filename)):
             try:
                 os.makedirs(os.path.dirname(filename))
-            except OSError:  # Guard against race condition
+            except OSError:
                 return
 
         with open(filename, "w+") as f:
@@ -166,7 +166,9 @@ class GameList(GameEventListener):
 
     def load_default(self):
         self._list = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpent", ["python3", "Snake/snake.py"])]
+                      Game("Serpent", ["python3", "Snake/snake.py"]),
+                      Game("Croix Vs Cercle", ["python3", "tictactoe/main.py"]),
+                      Game("Trouveur de mine", ["python3", "Démineur/Démineur.py"])]
         self._currentList = self._list.copy()
         for g in self._list:
             g.register_listener(self)
