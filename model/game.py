@@ -165,10 +165,10 @@ class GameList(GameEventListener):
             self.load_default()
 
     def load_default(self):
-        self._list = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"]),
-                      Game("Serpent", ["python3", "Snake/snake.py"]),
-                      Game("Croix Vs Cercle", ["python3", "tictactoe/main.py"]),
-                      Game("Trouveur de mine", ["python3", "Démineur/Démineur.py"])]
+        self._list = [Game("Energie 4", ["python3", "Puissance 4/jeu.py"], "images/Image_jeu/energie4.png"),
+                      Game("Serpent", ["python3", "Snake/snake.py"], "images/Image_jeu/serpent.png"),
+                      Game("Croix Vs Cercle", ["python3", "tictactoe/main.py"], "images/Image_jeu/croixVScercles.png"),
+                      Game("Trouveur de mine", ["python3", "Demineur/Démineur.py"], "images/Image_jeu/mine.png")]
         self._currentList = self._list.copy()
         for g in self._list:
             g.register_listener(self)
