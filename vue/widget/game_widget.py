@@ -141,6 +141,7 @@ class GameGrid(Frame, GameListListener):
 
         self.game_widgets = []
         self.containers = []
+        self._empties = []
 
         self._build_containers()
         self._place_containers()
@@ -148,16 +149,36 @@ class GameGrid(Frame, GameListListener):
     def _place_containers(self):
         self._nb_row = 0
         j = 0
+
+        while len(self.containers) + len(self._empties) <= self._nb_col:
+            self._empties.append(Frame(self, background=self.bg))
+
+        while len(self.containers) + len(self._empties) > self._nb_col and len(self._empties) > 0:
+            self._empties.pop().destroy()
+
         for container in self.containers:
             container.grid(sticky="nsew", column=j % self._nb_col, row=j // self._nb_col, padx=10, pady=10)
             Grid.columnconfigure(self, j % self._nb_col, weight=1, uniform="filled")
             Grid.rowconfigure(self, j // self._nb_col, weight=1, uniform="filled")
             j += 1
+
+        for container in self._empties:
+            container.grid(sticky="nsew", column=j % self._nb_col, row=j // self._nb_col, padx=10, pady=10)
+            Grid.columnconfigure(self, j % self._nb_col, weight=1, uniform="filled")
+            Grid.rowconfigure(self, j // self._nb_col, weight=1, uniform="filled")
+            j += 1
+
         self._nb_row = j // self._nb_col
 
     def _reset_grid(self):
         j = 0
         for container in self.containers:
+            container.grid_forget()
+            Grid.columnconfigure(self, j % self._nb_col, weight=0, uniform="empty")
+            Grid.rowconfigure(self, j // self._nb_col, weight=0, uniform="empty")
+            j += 1
+
+        for container in self._empties:
             container.grid_forget()
             Grid.columnconfigure(self, j % self._nb_col, weight=0, uniform="empty")
             Grid.rowconfigure(self, j // self._nb_col, weight=0, uniform="empty")
@@ -185,6 +206,7 @@ class GameGrid(Frame, GameListListener):
             widget = GameWidget(container, game, self._controller, background=self.bg)
             games_widget.append(widget)
             containers.append(container)
+
         self.game_widgets = games_widget
         self.containers = containers
 
