@@ -58,7 +58,7 @@ class UpperStrip(Frame):
         # STRIP
         t = self.winfo_width()
         t = t - 75
-        self._stripUpper.create_rectangle(0, 0, t, 75, outline='#272727', fill='#272727')
+        self._stripUpper.create_rectangle(0, 0, t + 75, 75, outline='#272727', fill='#272727')
         self._stripUpper.create_image(0, 0, image=self.logo, anchor="nw")
         # ID NAME
         self._stripUpper.create_text(t - 100, 35, text='My game ID', fill='white', anchor="n")
