@@ -141,10 +141,10 @@ class Minefield(object):
         for y in range(self.fieldHeight):
             for x in range(self.fieldWidth):
                 if self.reveal[x][y]=="0":
-                    bouton = tk.Button(fen, text=str(self.field[x][y]), relief=tk.GROOVE)
+                    bouton = tk.Button(fen, text=str(self.field[x][y]), relief=tk.GROOVE, bg="#8b8b8b")
                     bouton.grid(row=x, column=y)
                 else:
-                    bouton = tk.Button(fen,text="  ", fg="white", bg="white" , command= lambda i=x, j=y: JeuControle.hit(i,j), relief=tk.RAISED)
+                    bouton = tk.Button(fen,text="  ", fg="white", bg="#474747" , command= lambda i=x, j=y: JeuControle.hit(i,j), relief=tk.RAISED)
                     bouton.grid(row=x, column=y)
         print("Nombre de cases caché")
         print(self.get_reaveled())
