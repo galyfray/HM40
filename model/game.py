@@ -228,4 +228,5 @@ class GameList(GameEventListener):
     def add_game(self, game: Game):
         if game not in self._list:
             self._list.append(game)
+            self.set_filter(self._filter)
             game.register_listener(self)

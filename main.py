@@ -1,7 +1,10 @@
+import os
 from tkinter import *
 
+from PIL import Image
+
 from ViewInterface import Interface
-from model.game import GameList
+from model.game import GameList, Game
 from vue.widget.folder_bar import FolderBar
 from vue.widget.game_widget import GameGrid
 from vue.widget.upperStrip_connexion import UpperStrip
@@ -31,6 +34,11 @@ if __name__ == "__main__":
 
     gameList = GameList()
     gameList.load_from_file()
+
+    for subdir, dirs, files in os.walk("./images/fakeGames"):
+        for file in files:
+            filepath = subdir + os.sep + file
+            gameList.add_game(Game(file[:file.rfind(".")], "", Image.open(filepath), ))
 
     cr = GameGrid(sf, gameList)
     cr.grid(sticky="nsew")
