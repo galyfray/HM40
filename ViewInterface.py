@@ -23,7 +23,7 @@ class Interface(tk.Frame):
 
         tri = tk.IntVar(value=1)
 
-        tk.Radiobutton(Trier_par, text="Ordre Alphabétique", indicatoron=0, background="light blue", width=20, padx=20,
+        tk.Radiobutton(Trier_par, text="Ordre Alphabétique", indicatoron=0, background="light blue",activebackground="#6DDEEC",selectcolor="#179EAF", width=20, padx=20,
                        variable=tri, value=1, font=f"Times 10 bold").grid(row=0, sticky=tk.W, padx=4)
         tk.Radiobutton(Trier_par, text="Plus récent", indicatoron=0, background="light blue", width=20, padx=20,
                        variable=tri, value=2, font=f"Times 10 bold").grid(row=1, sticky=tk.W, padx=4)
