@@ -41,7 +41,7 @@ def Reset():
     frame_result.pack_forget()
     label_titre_win.pack_forget()
     label_titre_lose.pack_forget()
-    fen.geometry("150x240")
+    # fen.geometry("150x240")
     NewGame(8, 8, 10)
 
 
