@@ -169,42 +169,49 @@ def erreur_jeu():       #Fonction qui s'affiche pour demander le choix d'une aut
 
 def ajouterPion(co):
 
+    global status
     global J
     e = 3 #épaisseur pion
 
     global tour
-    
-    tour = tour + 1
-    if tour == 42 :
-        fin("Vous êtes à égalité")
 
-    print("Ajout pion en colonne ", co+1)
+    if status == 1 :
 
-    if J[0]==1 and tour/2-tour//2!=0 or J[0]==2 and tour/2-tour//2==0: #test déterminant la couleur du pion suivant le joueur et le tour
-        pion='X'
-        color='red'
+        print("Tour : ", tour)
         
-    if J[1]==2 and tour/2-tour//2==0 or J[1]==1 and tour/2-tour//2!=0:
-        pion='O'
-        color='yellow'
-
-    for ligne in range (6,0, -1):
-        li = ligne -1
-        print("ligne ", li)
-        if grille[li][co] == '-' :
-
-            grille[li][co] = pion
-
-            x1 = 250 + 40 * co
-            y1 = 100 + 40 * li
-            x2 = 250 + 40 * (co+1)
-            y2 = 100 + 40 * (li+1)
-            dessin.create_oval(x1+e, y1+e, x2-e, y2-e, width=2, outline=color, fill=color)
-            break
+        tour = tour + 1
         
-    dessin.update()
+        if tour == 42 :
+            fin("Vous êtes à égalité")
+            tour = 0
 
-    verif()
+        print("Ajout pion en colonne ", co+1)
+
+        if J[0]==1 and tour/2-tour//2!=0 or J[0]==2 and tour/2-tour//2==0: #test déterminant la couleur du pion suivant le joueur et le tour
+            pion='X'
+            color='red'
+            
+        if J[1]==2 and tour/2-tour//2==0 or J[1]==1 and tour/2-tour//2!=0:
+            pion='O'
+            color='yellow'
+
+        for ligne in range (6,0, -1):
+            li = ligne -1
+            print("ligne ", li)
+            if grille[li][co] == '-' :
+
+                grille[li][co] = pion
+
+                x1 = 250 + 40 * co
+                y1 = 100 + 40 * li
+                x2 = 250 + 40 * (co+1)
+                y2 = 100 + 40 * (li+1)
+                dessin.create_oval(x1+e, y1+e, x2-e, y2-e, width=2, outline=color, fill=color)
+                break
+            
+        dessin.update()
+
+        verif()
 
     return
 
@@ -239,32 +246,16 @@ def verif():
 
     return
 
-def start_again():
-
-
-    global fen3
-    global grille
-    global fen1
-
-    fen3.destroy()
-    grille = [['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-'],
-              ['-', '-', '-', '-', '-', '-', '-']]
-    
-    fen1.update()
-    afficher(grille)
-
-
-    return
-
     
 
 def fin (gagant):     #Fonction qui permet l'arrêt du jeu et la fermeture de la fenêtre principale avec affichage d'une fenêtre secondaire
 
+    global fen3
     fen3 = Tk()
+
+    global status
+
+    status = 0
 
     fen3.title("Fin du jeu")
     fen3.focus_set()
@@ -283,6 +274,32 @@ def fin (gagant):     #Fonction qui permet l'arrêt du jeu et la fermeture de la
     fen3.protocol("WM_DELETE_WINDOW", start_again)
     
     fen3.mainloop()
+
+    return
+
+def start_again():
+
+
+    global fen3
+    global grille
+    global fen1
+    global tour
+    global status
+
+    status = 1
+
+    fen3.destroy()
+    grille = [['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-'],
+              ['-', '-', '-', '-', '-', '-', '-']]
+
+    tour = 0
+    
+    fen1.update()
+    afficher(grille)
 
     return
 
@@ -308,6 +325,7 @@ afficher(grille)
 J = joueur()
 
 tour = 0
+status = 1
 
 clickPion()
 
