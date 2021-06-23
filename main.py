@@ -3,7 +3,7 @@ from tkinter import *
 
 from PIL import Image
 
-from ViewInterface import Interface
+from vue.ViewInterface import Interface
 from model.game import GameList, Game
 from vue.widget.folder_bar import FolderBar
 from vue.widget.game_widget import GameGrid
