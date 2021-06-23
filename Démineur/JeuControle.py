@@ -20,9 +20,9 @@ frame_bottom.pack()
 frame_result = tk.Frame(fen)
 quitter = tk.Button(frame_bottom, text="Quitter", command=fen.destroy, relief=tk.GROOVE)
 quitter.grid(row=0, column=0)
-label_titre_lose = tk.Label(frame_result, text="Perdu Cheh !", height=2, relief=tk.SUNKEN, fg='black',
+label_titre_lose = tk.Label(frame_result, text="Perdu Dommage", height=2, relief=tk.SUNKEN, fg='black',
                             font=("Calibri", 18))
-label_titre_win = tk.Label(frame_result, text="GG Gagné !", height=2, relief=tk.SUNKEN, fg='black',
+label_titre_win = tk.Label(frame_result, text="Félicitations Gagné !", height=2, relief=tk.SUNKEN, fg='black',
                            font=("Calibri", 18))
 game = 0
 fen.resizable(width=False, height=False)
