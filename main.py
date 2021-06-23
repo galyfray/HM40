@@ -3,8 +3,8 @@ from tkinter import *
 
 from PIL import Image
 
-from vue.ViewInterface import Interface
 from model.game import GameList, Game
+from vue.ViewInterface import Interface
 from vue.widget.folder_bar import FolderBar
 from vue.widget.game_widget import GameGrid
 from vue.widget.upperStrip_connexion import UpperStrip
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     cr = GameGrid(sf, gameList)
     cr.grid(sticky="nsew")
 
-    gameList.set_reverse(True)
+    gameList.set_reverse(False)
 
 
     def contconf(event):
